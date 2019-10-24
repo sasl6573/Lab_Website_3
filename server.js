@@ -40,7 +40,7 @@ const dbConfig = {
 	port: 5432,
 	database: 'football_db',
 	user: 'postgres',
-	password: 'pwd'
+	password: '1234'
 };
 
 let db = pgp(dbConfig);
@@ -66,6 +66,14 @@ app.get('/register', function(req, res) {
 });
 
 /*Add your other get/post request handlers below here: */
+
+app.get('/home', function(req, res) {
+  res.render('pages/home',{
+    my_title: 'Home Page',
+    color: 'FF0000',
+    color_msg: 'The Color Red'
+  });
+});
 
 /*********************************
  
