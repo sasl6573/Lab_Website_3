@@ -65,6 +65,45 @@ app.get('/register', function(req, res) {
 	});
 });
 
+app.get('/home', function(req, res){
+	res.render('pages/home',{
+		my_title:'Home Page',
+		color: 'FF0000',
+		color_msg: 'The Color Red'
+	});
+});
+
+app.get('/home/pick_color', function(req, res) {
+	var color_choice = req.query.color_selection;
+	var color_options =  'select * from favorite_colors;';
+	var color_message = "select color_msg from favorite_colors where hex_value = '" + color_choice + "';";
+	db.task('get-everything', task => {
+        return task.batch([
+            task.any(color_options),
+            task.any(color_message)
+        ]);
+    })
+    .then(info => {
+    	res.render('pages/home',{
+				my_title: "Home Page",
+				data: info[0],
+				color: color_choice,
+				color_msg: info[1][0].color_msg
+			})
+    })
+    .catch(error => {
+        // display error message in case an error
+            console.log('error', error);//if this doesn't work for you replace with console.log
+            res.render('pages/home', {
+                title: 'Home Page',
+                data: '',
+                color: '',
+                color_msg: ''
+            })
+    });
+
+});
+
 /*Add your other get/post request handlers below here: */
 
 app.get('/home', function(req, res) {
