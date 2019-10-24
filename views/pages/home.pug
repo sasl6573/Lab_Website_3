@@ -27,9 +27,9 @@ div.container
           - if(data)
             for item in data
               if(item.name)
-                button.btn.btn-block(type="submit", name="color_selection", value=item.hex_value, style="background-color: #" + item.hex_value)= item.name
+                button.btn.btn-block(type="submit", name="color_selection", value= item.hex_value, style="background-color: #" + item.hex_value)= item.name
               else
-                button.btn.btn-block(type="submit", name="color_selection", value=item.hex_value, style="backgound-color: #" + item.hex_value)= item.hex_value
+                button.btn.btn-block(type="submit", name="color_selection", value= item.hex_value, style="background-color: #" + item.hex_value)= item.hex_value
 
         form(action="/home/pick_color", method="post")
           //- TODO: Third Pug Update

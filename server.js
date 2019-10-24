@@ -112,6 +112,7 @@ app.get('/home', function(req, res) {
     .then(function (rows) {
       res.render('pages/home',{
         my_title: 'Home Page',
+
         data: rows,
         color: '',
         color_msg: ''
