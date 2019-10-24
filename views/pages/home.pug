@@ -18,9 +18,18 @@ div.container
         a(href="https://www.cubookstore.com/p-80451-colorado-buffaloes-mini-speed-football-helmet.aspx") CU Bookstore
         hr
         //- TODO: First Pug Update
+        - if(color)
+          p= color_msg
+          body(style="background-color: #"+color)
 
         form(action="/home/pick_color", method="get")
           //- TODO: Second Pug Update
+          - if(data)
+            for item in data
+              if(item.name)
+                button.btn.btn-block(type="submit", name="color_selection", value= item.hex_value, style="background-color: #" + item.hex_value)= item.name
+              else
+                button.btn.btn-block(type="submit", name="color_selection", value= item.hex_value, style="background-color: #" + item.hex_value)= item.hex_value
 
         form(action="/home/pick_color", method="post")
           //- TODO: Third Pug Update
