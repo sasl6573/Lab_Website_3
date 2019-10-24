@@ -33,5 +33,18 @@ div.container
 
         form(action="/home/pick_color", method="post")
           //- TODO: Third Pug Update
+          div.form-group.row
+            label.col-sm-2.col-form-label(for="color_hex") Color Hex Value:
+              div.col-sm-10
+              input.form-control#color_hex(type="text", name="color_hex", placeholder="Enter Hex Value", maxlength="6")
+          div.form-group.row
+            label.col-sm-2.col-form-label(for="color_name") Color Name:
+            div.col-sm-10
+              input.form-control#color_name(type="text", name="color_name", placeholder="Enter Color's Name")
+          div.form-group.row
+            label.col-sm-2.col-form-label(for="color_message") Color Message:
+            div.col-sm-10
+              input.form-control#color_message(type="text", name="color_message", placeholder="Enter the Color's Description")
+          button.btn.btn-primary.btn-block(type="submit") Submit 
 
 include ../partials/footer.pug
