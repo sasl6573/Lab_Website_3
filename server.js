@@ -68,11 +68,26 @@ app.get('/register', function(req, res) {
 /*Add your other get/post request handlers below here: */
 
 app.get('/home', function(req, res) {
-  res.render('pages/home',{
-    my_title: 'Home Page',
-    color: 'FF0000',
-    color_msg: 'The Color Red'
-  });
+  var query = 'select * from favorite_colors;';
+  db.any(query)
+    .then(function (rows) {
+      res.render('pages/home',{
+        my_title: 'Home Page',
+        data: rows,
+        color: '',
+        color_msg: ''
+      })
+    })
+    .catch(function (err) {
+      // display error message in case of error
+      console.log(err); // if this doesn't work for you replace with console.log
+      res.render('pages/home', {
+        title: "Home Page",
+        data: '',
+        color: '',
+        color_msg: ''
+      })
+    })
 });
 
 /*********************************
