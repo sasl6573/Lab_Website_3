@@ -9,34 +9,67 @@ div.container
       div.card
         //- TODO: Modify the pug code below to conditionally set the image_src
         - let image_src = '../../resources/img/helmet.jpg'
+        if selected_player
+          if selected_player.img_src
+            - image_src = selected_player.img_src
 
         img.card-img-top#player_img(src= image_src, alt="Football Player")
         div.card-body.mx-auto
-          form.form(action="/player_info/post", method="get")
+          form.form(action="/player_info/select_player", method="get")
             select.custom-select(name="player_choice", onchange="this.form.submit()")
               option(selected) Select Player
               //- TODO: Populate the select with player options. Set the value to the player's id and display the player's name.
+              each player in player_list
+                option(value=player.id)= player.name
     div.col-8
       div.table-responsive
         table.table
           //- TODO: Set the player's information. On select, fill in the player's information in each of the field below. You will need to calculate the average rushing, receiving, and passing yards.
+          -
+            let p_year = '?'
+            let p_major = '?'
+            let p_game = '?'
+            let p_pyards = '?'
+            let p_apyards = '?'
+            let p_ruyards = '?'
+            let p_aruyards = '?'
+            let p_reyards = '?'
+            let p_areyards = '?'
+          if selected_player
+            if selected_player.year
+              - p_year = selected_player.year
+            if selected_player.major
+              - p_major = selected_player.major
+            if selected_player.passing_yards
+              - p_pyards = selected_player.passing_yards
+            if selected_player.rushing_yards
+              - p_ruyards = selected_player.rushing_yards
+            if selected_player.receiving_yards
+              - p_reyards = selected_player.receiving_yards
+            if game_total
+              -
+                p_game = game_total.count
+                p_apyards = p_pyards / p_game
+                p_aruyards = p_ruyards / p_game
+                p_areyards = p_reyards / p_game
+
           tr
             th Year
-            td ?
+            td= p_year
           tr
             th Major
-            td ?
+            td= p_major
           tr
             th Games Played
-            td ?
+            td= p_game
           tr
-            td Passing Yards:
-            td Avg. Passing Yards:
+            td Passing Yards: #{ p_pyards }
+            td Avg. Passing Yards: #{ p_apyards }
           tr
-            td Rushing Yards: 
-            td Avg. Rushing Yards:
+            td Rushing Yards: #{ p_ruyards }
+            td Avg. Rushing Yards: #{ p_aruyards }
           tr
-            td Receiving Yards:
-            td Avg. Receiving Yards:
+            td Receiving Yards: #{ p_reyards }
+            td Avg. Receiving Yards: #{ p_areyards }
 
 include ../partials/footer.pug
