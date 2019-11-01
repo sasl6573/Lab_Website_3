@@ -2,6 +2,15 @@
 include ../partials/header.pug
 include ../partials/menu.pug
 
+-function prettyDate(dateString){
+    -var date = new Date(dateString);
+    -var d = date.getDate();
+    -var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+    -var m = monthNames[date.getMonth()];
+    -var y = date.getFullYear();
+    -return m+' '+d+', '+y;
+-}
+
 div.container
   br
   div.jumbotron
@@ -18,6 +27,21 @@ div.container
       th Home Score
       th Opp. Score
     //- TODO: Iterate over the football_game table data and display the date, name, home score, and visitor score for each row. Determine the winner and display the winner's name in the last column
+    -if(games)
+      for game in games
+        if(game.game_date)
+          tr
+            td= prettyDate(game.game_date)
+            if(game.visitor_name)
+              td= game.visitor_name
+            if(game.home_score)
+              td= game.home_score
+            if(game.visitor_score)
+              td= game.visitor_score
+            if(game.home_score > game.visitor_score)
+              td CU Boulder
+            if(game.home_score < game.visitor_score)
+              td= game.visitor_name
   br
 
   table.table.text-center
@@ -26,6 +50,10 @@ div.container
       th Losses
     tr
       //- TODO: Display the total number of wins here. This value should come from your server-side db query.
+      -if(wins)
+        td= wins.count
       //- TODO: Display the total number of losses here. This value should come from your server-side db query.
+      -if(losses)
+        td= losses.count
 
 include ../partials/footer.pug

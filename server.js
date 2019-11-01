@@ -67,6 +67,14 @@ app.get('/register', function(req, res) {
 
 /*Add your other get/post request handlers below here: */
 
+/*********************************
+ 
+      /home - get request (no parameters) 
+          This route will make a single query to the favorite_colors table to retrieve all of the rows of colors
+          This data will be passed to the home view (pages/home)
+
+**********************************/
+
 app.get('/home', function(req, res) {
   var query = 'select * from favorite_colors;';
   db.any(query)
@@ -91,7 +99,16 @@ app.get('/home', function(req, res) {
         })
 });
 
-
+/*********************************
+ 
+      /home/pick_color - get request (color)
+          This route will read in a get request which provides the color (in hex) that the user has selected from the home page.
+          Next, it will need to handle multiple postgres queries which will:
+            1. Retrieve all of the color options from the favorite_colors table (same as /home)
+            2. Retrieve the specific color message for the chosen color
+          The results for these combined queries will then be passed to the home view (pages/home)
+          
+**********************************/
 
 app.get('/home/pick_color', function(req, res) {
   var color_choice = req.query.color_selection;
@@ -123,6 +140,16 @@ app.get('/home/pick_color', function(req, res) {
     });
 
 });
+
+/*********************************
+ 
+      /home/pick_color - post request (color_message)
+          This route will be used for reading in a post request from the user which provides the color message for the default color.
+          We'll be "hard-coding" this to only work with the Default Color Button, which will pass in a color of #FFFFFF (white).
+          The parameter, color_message, will tell us what message to display for our default color selection.
+          This route will then render the home page's view (pages/home)
+          
+**********************************/
 
 app.post('/home/pick_color', function(req, res) {
   var color_hex = req.body.color_hex;
@@ -160,37 +187,55 @@ app.post('/home/pick_color', function(req, res) {
 
 /*********************************
  
-  		/home - get request (no parameters) 
-  				This route will make a single query to the favorite_colors table to retrieve all of the rows of colors
-  				This data will be passed to the home view (pages/home)
+      /team_stats - get request (no parameters)
+        This route will require no parameters.  It will require 3 postgres queries which will:
+          1. Retrieve all of the football games in the Fall 2018 Season
+          2. Count the number of winning games in the Fall 2018 Season
+          3. Count the number of lossing games in the Fall 2018 Season
+        The three query results will then be passed onto the team_stats view (pages/team_stats).
+        The team_stats view will display all fo the football games for the season, show who won each game, 
+        and show the total number of wins/losses for the season.
+          
+**********************************/
 
-  		/home/pick_color - post request (color_message)
-  				This route will be used for reading in a post request from the user which provides the color message for the default color.
-  				We'll be "hard-coding" this to only work with the Default Color Button, which will pass in a color of #FFFFFF (white).
-  				The parameter, color_message, will tell us what message to display for our default color selection.
-  				This route will then render the home page's view (pages/home)
+app.get('/team_stats', function(req, res) {
+  var query1 = 'select * from football_games;';
+  var query2 = 'select count(visitor_name) from football_games where home_score > visitor_score;';
+  var query3 = 'select count(visitor_name) from football_games where home_score < visitor_score;';
+  db.task('get-everything', task => {
+    return task.batch([
+      task.any(query1),
+      task.any(query2),
+      task.any(query3)
+    ]);
+  })
+  .then(data => {
+    res.render('pages/team_stats',{
+      my_title: "Team Stats",
+      games: data[0],
+      wins: data[1][0],
+      losses: data[2][0]
+    })
+  })
+  .catch(err => {
+    // display error message in case an error
+    console.log('error '+ err);
+    res.render('pages/team_stats',{
+      my_title: "Team Stats",
+      games: '',
+      wins: '',
+      losses: ''
+    })
+  })
+});
 
-  		/home/pick_color - get request (color)
-  				This route will read in a get request which provides the color (in hex) that the user has selected from the home page.
-  				Next, it will need to handle multiple postgres queries which will:
-  					1. Retrieve all of the color options from the favorite_colors table (same as /home)
-  					2. Retrieve the specific color message for the chosen color
-  				The results for these combined queries will then be passed to the home view (pages/home)
-
-  		/team_stats - get request (no parameters)
-  			This route will require no parameters.  It will require 3 postgres queries which will:
-  				1. Retrieve all of the football games in the Fall 2018 Season
-  				2. Count the number of winning games in the Fall 2018 Season
-  				3. Count the number of lossing games in the Fall 2018 Season
-  			The three query results will then be passed onto the team_stats view (pages/team_stats).
-  			The team_stats view will display all fo the football games for the season, show who won each game, 
-  			and show the total number of wins/losses for the season.
+/*********************************
 
   		/player_info - get request (no parameters)
   			This route will handle a single query to the football_players table which will retrieve the id & name for all of the football players.
 			  Next it will pass this result to the player_info view (pages/player_info), which will use the ids & names to populate the select tag for a form
 			  
-************************************/
+**********************************/
 
 
 app.listen(3000);
